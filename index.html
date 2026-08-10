@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>今日の献立</title>
+<style>
+  :root{
+    --pop-yellow:#FFD23F;
+    --pop-orange:#FF6B35;
+    --pop-red:#F03A47;
+    --pop-teal:#2EC4B6;
+    --pop-navy:#2B2D42;
+    --pop-cream:#FFF6E5;
+    --pop-lilac:#B8B8FF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    min-height:100dvh;
+    display:flex;align-items:center;justify-content:center;
+    padding:16px;
+    background:
+      radial-gradient(circle at 15% 12%, #FFE08A 0, transparent 42%),
+      radial-gradient(circle at 85% 18%, #7BE0D6 0, transparent 42%),
+      radial-gradient(circle at 50% 100%, #FFB199 0, transparent 46%),
+      var(--pop-cream);
+    font-family:'Hiragino Maru Gothic ProN','Rounded Mplus 1c',system-ui,-apple-system,sans-serif;
+    color:var(--pop-navy);
+  }
+  .card{
+    width:100%;max-width:400px;
+    background:#fff;
+    border:4px solid var(--pop-navy);
+    border-radius:26px;
+    box-shadow:7px 7px 0 var(--pop-navy);
+    padding:26px 20px 28px;
+    text-align:center;
+  }
+  .hidden{display:none !important;}
+
+  /* スタート */
+  .logo{font-size:60px;line-height:1;}
+  .title{font-size:36px;font-weight:900;margin:6px 0 2px;letter-spacing:1px;}
+  .lead{color:#8a8c9a;margin-bottom:22px;font-size:14px;}
+
+  .big{
+    width:100%;border:3px solid var(--pop-navy);
+    border-radius:18px;padding:18px;margin-top:14px;
+    font-size:20px;font-weight:800;cursor:pointer;
+    box-shadow:4px 4px 0 var(--pop-navy);
+    transition:transform .08s, box-shadow .08s;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    font-family:inherit;color:var(--pop-navy);
+  }
+  .big:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--pop-navy);}
+  .main-btn{background:var(--pop-orange);color:#fff;}
+  .side-btn{background:var(--pop-teal);color:#fff;}
+  .normal-btn{background:var(--pop-yellow);text-align:left;justify-content:flex-start;}
+  .lazy-btn{background:var(--pop-lilac);text-align:left;justify-content:flex-start;}
+  .btn-emoji{font-size:28px;}
+  .big small{display:block;font-size:12px;font-weight:600;opacity:.7;margin-top:2px;}
+  .big strong{display:block;font-size:20px;}
+
+  .q{font-size:23px;font-weight:900;margin:8px 0 16px;}
+  .link{background:none;border:none;color:#9a9cae;font-size:14px;cursor:pointer;font-weight:700;font-family:inherit;}
+  .back-top{display:block;margin:0 auto 14px;}
+
+  /* 結果 */
+  .tag{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:13px;font-weight:800;color:#fff;background:var(--pop-navy);
+    padding:4px 12px;border-radius:999px;margin-bottom:12px;
+  }
+  .mode-chip{background:var(--pop-yellow);color:var(--pop-navy);padding:1px 8px;border-radius:999px;font-size:12px;}
+  .lead-in{font-size:16px;font-weight:700;color:#9a7b2e;margin-bottom:4px;min-height:22px;}
+  .dish{
+    font-size:42px;font-weight:900;line-height:1.15;min-height:58px;
+    display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
+  }
+  .dish.small{font-size:28px;min-height:38px;}
+  .slot.spinning{color:#c0c2d0;filter:blur(.3px);}
+  .slot.settled{color:var(--pop-red);}
+  .dish.small .slot.settled{color:var(--pop-teal);}
+  .bang{color:var(--pop-orange);}
+  .pop{animation:pop .35s cubic-bezier(.2,1.4,.4,1);}
+  @keyframes pop{0%{transform:scale(.6);opacity:0;}100%{transform:scale(1);opacity:1;}}
+
+  .reroll{
+    margin-top:18px;background:#fff;border:3px solid var(--pop-navy);
+    border-radius:14px;padding:13px 20px;font-size:16px;font-weight:800;
+    cursor:pointer;box-shadow:3px 3px 0 var(--pop-navy);font-family:inherit;color:var(--pop-navy);
+    transition:transform .08s, box-shadow .08s;
+  }
+  .reroll:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--pop-navy);}
+  .reroll:disabled{opacity:.4;}
+  .reroll.small{font-size:14px;padding:10px 16px;margin-top:12px;}
+
+  .subtle-add{
+    margin-top:24px;background:none;border:2px dashed #c7c9d6;
+    color:#9a9cae;border-radius:12px;padding:11px 16px;
+    font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
+  }
+  .subtle-add:active{transform:scale(.97);}
+  .subtle-add:disabled{opacity:.4;}
+  .side-sub{margin-top:22px;padding-top:18px;border-top:2px dashed #e3e4ec;}
+</style>
+</head>
+<body>
+
+<!--
+==================================================================
+  ★★★ メニューを追加・削除したいときは、ここだけ編集！ ★★★
+
+  ルールは3つ：
+    1. 料理名は半角のダブルクォート " " で囲む   例: "肉じゃが"
+    2. うしろに半角カンマ , をつける
+    3. 消したいときは その料理ごと（"焼きそば", まるごと）削除する
+
+  ※ 全角スペースやカンマ抜けがあると動かなくなるので注意。
+==================================================================
+-->
+<script>
+  // 手抜きの主菜（疲れた日モードで出るやつ）
+  const MAIN_LAZY = [
+    "コンビニ飯","外食！","もやし炒め","ペペロンチーノ","焼うどん",
+    "塩焼きそば","焼きそば","焼き肉丼","そぼろ丼","ガーリックライス",
+    "チャーハン","目玉焼き丼","ニラ玉","生姜焼き","回鍋肉",
+    "豚キムチ","野菜炒め","冷やし中華","素麺","キムチチャーハン",
+    "天津飯","うどんすき","麻婆春雨","豚バラ大根","鶏そぼろ丼",
+  ];
+
+  // 普通の主菜（ちゃんと作るモードで追加で出るやつ）
+  const MAIN_NORMAL = [
+    "魚のフライ","魚の照り焼き","つけ麺","ミートソースパスタ","カルボナーラ",
+    "ナポリタン","煮込みハンバーグ","肉じゃが","麻婆豆腐","鶏の照り焼き",
+    "チキン南蛮","唐揚げ","ドライカレー","中華丼","豚丼",
+    "牛丼","オムライス","親子丼","カレーライス","かつ丼","ハンバーグ",
+    "餃子","酢豚","エビチリ","青椒肉絲","八宝菜",
+    "鮭のムニエル","ぶり大根","さんまの塩焼き","天ぷら","すき焼き",
+    "カレーうどん","麻婆茄子","エビフライ","ハヤシライス","タコライス",
+  ];
+
+  // 副菜（モードなし。いつもここ全部から出る）
+  const SIDES = [
+    "冷奴","きゅうりの浅漬け","トマトサラダ","わかめの酢の物","味噌汁",
+    "コーンスープ","ほうれん草のおひたし","きんぴらごぼう","ポテトサラダ",
+    "切り干し大根","マカロニサラダ",
+  ];
+</script>
+<!-- ================== 編集はここまで ================== -->
+
+
+<div class="card" id="app"></div>
+
+<script>
+  const SPIN_MS = 1300;   // スロットが回る時間（ミリ秒）
+  const TICK_MS = 70;     // 料理名が切り替わる速さ
+
+  // 状態
+  let state = {
+    screen: "start",     // start / mode / result
+    category: null,      // main / side
+    mode: null,          // 普通 / 手抜き / null
+    mainName: null, mainSpin: false,
+    sideName: null, sideSpin: false, sideOpen: false,
+  };
+  let spinTimers = [];
+
+  function clearSpin(){ spinTimers.forEach(clearInterval); spinTimers.forEach(clearTimeout); spinTimers=[]; }
+
+  // モードに応じた候補プール
+  function poolFor(category, mode){
+    if(category === "side") return SIDES;
+    if(mode === "手抜き") return MAIN_LAZY;
+    return MAIN_LAZY.concat(MAIN_NORMAL); // 普通 = 全主菜
+  }
+  // 直前と別のものを引く
+  function pick(pool, prev){
+    if(pool.length === 0) return null;
+    if(pool.length === 1) return pool[0];
+    let n; do { n = pool[Math.floor(Math.random()*pool.length)]; } while(n === prev);
+    return n;
+  }
+
+  // スロットを回して確定
+  function spin(kind){ // kind: "main" | "side"
+    const pool = kind==="main" ? poolFor("main", state.mode) : poolFor("side", null);
+    const prev = kind==="main" ? state.mainName : state.sideName;
+    const chosen = pick(pool, prev);
+
+    if(kind==="main"){ state.mainSpin=true; } else { state.sideSpin=true; state.sideOpen=true; }
+    render();
+
+    const slotEl = document.getElementById(kind+"-slot");
+    const iv = setInterval(()=>{
+      if(slotEl) slotEl.textContent = pool[Math.floor(Math.random()*pool.length)];
+    }, TICK_MS);
+    spinTimers.push(iv);
+
+    const to = setTimeout(()=>{
+      clearInterval(iv);
+      if(kind==="main"){ state.mainName=chosen; state.mainSpin=false; }
+      else { state.sideName=chosen; state.sideSpin=false; }
+      render();
+    }, SPIN_MS);
+    spinTimers.push(to);
+  }
+
+  const busy = ()=> state.mainSpin || state.sideSpin;
+
+  // 操作
+  function chooseCategory(cat){
+    state.category = cat;
+    if(cat==="side"){
+      state.mode=null; state.screen="result";
+      state.mainName=null; state.sideOpen=true;
+      render(); spin("side");
+    } else {
+      state.screen="mode"; render();
+    }
+  }
+  function chooseMode(md){
+    state.mode=md; state.screen="result";
+    state.sideOpen=false; state.sideName=null;
+    render(); spin("main");
+  }
+  function rerollMain(){ if(!busy()) spin("main"); }
+  function rollSide(){ if(!busy()) spin("side"); }
+  function reset(){
+    clearSpin();
+    state = {screen:"start",category:null,mode:null,mainName:null,mainSpin:false,sideName:null,sideSpin:false,sideOpen:false};
+    render();
+  }
+
+  // 画面描画
+  function render(){
+    const app = document.getElementById("app");
+    const s = state;
+
+    if(s.screen==="start"){
+      app.innerHTML = `
+        <div class="logo">🍚</div>
+        <h1 class="title">今日の献立</h1>
+        <p class="lead">なに食べる？ ボタンで決めちゃおう</p>
+        <button class="big main-btn" onclick="chooseCategory('main')">主菜をきめる</button>
+        <button class="big side-btn" onclick="chooseCategory('side')">副菜をきめる</button>
+      `;
+      return;
+    }
+
+    if(s.screen==="mode"){
+      const lazyN = poolFor("main","手抜き").length;
+      const allN = poolFor("main","普通").length;
+      app.innerHTML = `
+        <button class="link back-top" onclick="reset()">← もどる</button>
+        <h2 class="q">今日はどっちの気分？</h2>
+        <button class="big normal-btn" onclick="chooseMode('普通')">
+          <span class="btn-emoji">🍳</span>
+          <span><strong>普通</strong><small>ちゃんと作る（${allN}品から）</small></span>
+        </button>
+        <button class="big lazy-btn" onclick="chooseMode('手抜き')">
+          <span class="btn-emoji">😮‍💨</span>
+          <span><strong>手抜き</strong><small>疲れた日用（${lazyN}品から）</small></span>
+        </button>
+      `;
+      return;
+    }
+
+    // result
+    let html = `<button class="link back-top" onclick="reset()">← 最初にもどる</button>`;
+
+    if(s.category==="main"){
+      const slotCls = s.mainSpin ? "slot spinning" : "slot settled";
+      const popCls = s.mainSpin ? "dish" : "dish pop";
+      html += `
+        <div>
+          <div class="tag">主菜 <span class="mode-chip">${s.mode}</span></div>
+          <div class="lead-in">${s.mainSpin ? "今日は…" : "今日は！"}</div>
+          <div class="${popCls}">
+            <span id="main-slot" class="${slotCls}">${s.mainName ?? "…"}</span>${!s.mainSpin && s.mainName ? '<span class="bang">！</span>' : ''}
+          </div>
+          <button class="reroll" onclick="rerollMain()" ${busy()?"disabled":""}>🎲 主菜を引き直す</button>
+        </div>
+      `;
+    }
+
+    if(s.category==="main" && !s.sideOpen){
+      html += `<button class="subtle-add" onclick="rollSide()" ${busy()?"disabled":""}>＋ 副菜もつける？</button>`;
+    }
+
+    if(s.category==="side" || (s.category==="main" && s.sideOpen)){
+      const slotCls = s.sideSpin ? "slot spinning" : "slot settled";
+      const isSub = s.category==="main";
+      const dishCls = (s.sideSpin ? "dish" : "dish pop") + (isSub ? " small" : "");
+      html += `
+        <div class="${isSub ? "side-sub" : ""}">
+          <div class="tag">副菜</div>
+          ${s.category==="side" ? `<div class="lead-in">${s.sideSpin ? "今日は…" : "今日は！"}</div>` : ""}
+          <div class="${dishCls}">
+            <span id="side-slot" class="${slotCls}">${s.sideName ?? "…"}</span>${!s.sideSpin && s.sideName ? '<span class="bang">！</span>' : ''}
+          </div>
+          <button class="reroll small" onclick="rollSide()" ${busy()?"disabled":""}>🎲 副菜を引き直す</button>
+        </div>
+      `;
+    }
+
+    app.innerHTML = html;
+  }
+
+  render();
+</script>
+</body>
+</html>
