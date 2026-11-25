@@ -2,124 +2,125 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>今日の献立</title>
+<meta name="description" content="今日なに食べよう、をボタンひとつで決める献立アプリ。">
+<meta name="theme-color" content="#553A23">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F5F0E6'/%3E%3Crect x='5' y='5' width='22' height='22' fill='none' stroke='%23B0412E' stroke-width='2'/%3E%3Cpath d='M11 12h10M11 16h10M11 20h6' stroke='%232A2521' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --pop-yellow:#FFD23F;
-    --pop-orange:#FF6B35;
-    --pop-red:#F03A47;
-    --pop-teal:#2EC4B6;
-    --pop-navy:#2B2D42;
-    --pop-cream:#FFF6E5;
-    --pop-lilac:#B8B8FF;
+    --wall:#EFE6D6;     /* 壁 */
+    --ink:#2A2521;      /* 墨 */
+    --sub:#7A6550;      /* うすい茶 */
+    --wood-dark:#8A6440;
+    --sign:#553A23;     /* 看板のこげ茶 */
+    --shu:#B0412E;      /* 朱 */
+    --paper:#FFFBF2;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-  html,body{height:100%;}
+  html{color-scheme:light;-webkit-text-size-adjust:100%;}
   body{
-    min-height:100dvh;
-    display:flex;align-items:center;justify-content:center;
-    padding:16px;
+    min-height:100dvh;color:var(--ink);line-height:1.6;
     background:
-      radial-gradient(circle at 15% 12%, #FFE08A 0, transparent 42%),
-      radial-gradient(circle at 85% 18%, #7BE0D6 0, transparent 42%),
-      radial-gradient(circle at 50% 100%, #FFB199 0, transparent 46%),
-      var(--pop-cream);
-    font-family:'Hiragino Maru Gothic ProN','Rounded Mplus 1c',system-ui,-apple-system,sans-serif;
-    color:var(--pop-navy);
+      repeating-linear-gradient(0deg, rgba(138,100,64,.035) 0 1px, transparent 1px 6px),
+      var(--wall);
+    font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;
   }
-  .card{
-    width:100%;max-width:400px;
-    background:#fff;
-    border:4px solid var(--pop-navy);
-    border-radius:26px;
-    box-shadow:7px 7px 0 var(--pop-navy);
-    padding:26px 20px 28px;
-    text-align:center;
-  }
-  .hidden{display:none !important;}
+  .mincho{font-family:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP",serif;}
+  .wrap{max-width:440px;margin:0 auto;padding:22px 18px 48px;}
+  button{font:inherit;color:inherit;}
 
-  /* スタート */
-  .logo{font-size:60px;line-height:1;}
-  .title{font-size:36px;font-weight:900;margin:6px 0 2px;letter-spacing:1px;}
-  .lead{color:#8a8c9a;margin-bottom:22px;font-size:14px;}
+  /* 看板 */
+  .sign{
+    position:relative;text-align:center;color:#F7EBD3;
+    background:
+      repeating-linear-gradient(90deg, rgba(0,0,0,.06) 0 2px, transparent 2px 9px),
+      linear-gradient(180deg,#6B4A2E,var(--sign));
+    border-radius:6px;padding:12px 10px 13px;
+    box-shadow:0 3px 0 #3E2A18, 0 8px 16px rgba(62,42,24,.18);
+  }
+  .sign h1{font-size:25px;font-weight:800;letter-spacing:.32em;text-indent:.32em;}
+  .sign::before,.sign::after{
+    content:"";position:absolute;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;
+    background:#C9A66B;box-shadow:inset 0 -1px 0 rgba(0,0,0,.4);
+  }
+  .sign::before{left:10px;} .sign::after{right:10px;}
+  .date{text-align:center;font-size:12px;color:var(--sub);margin-top:10px;letter-spacing:.1em;}
 
-  .big{
-    width:100%;border:3px solid var(--pop-navy);
-    border-radius:18px;padding:18px;margin-top:14px;
-    font-size:20px;font-weight:800;cursor:pointer;
-    box-shadow:4px 4px 0 var(--pop-navy);
-    transition:transform .08s, box-shadow .08s;
-    display:flex;align-items:center;justify-content:center;gap:10px;
-    font-family:inherit;color:var(--pop-navy);
-  }
-  .big:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--pop-navy);}
-  .main-btn{background:var(--pop-orange);color:#fff;}
-  .side-btn{background:var(--pop-teal);color:#fff;}
-  .normal-btn{background:var(--pop-yellow);text-align:left;justify-content:flex-start;}
-  .lazy-btn{background:var(--pop-lilac);text-align:left;justify-content:flex-start;}
-  .btn-emoji{font-size:28px;}
-  .big small{display:block;font-size:12px;font-weight:600;opacity:.7;margin-top:2px;}
-  .big strong{display:block;font-size:20px;}
+  .q{text-align:center;font-size:14px;color:var(--sub);margin:18px 0 0;letter-spacing:.08em;}
 
-  .q{font-size:23px;font-weight:900;margin:8px 0 16px;}
-  .link{background:none;border:none;color:#9a9cae;font-size:14px;cursor:pointer;font-weight:700;font-family:inherit;}
-  .back-top{display:block;margin:0 auto 14px;}
+  /* 木札 */
+  .boards{display:flex;justify-content:center;align-items:flex-start;gap:22px;margin-top:40px;}
+  .plaque{
+    position:relative;display:flex;flex-direction:row-reverse;justify-content:center;align-items:flex-start;gap:6px;
+    min-width:96px;height:290px;padding:18px 12px;cursor:pointer;text-align:left;
+    background:
+      repeating-linear-gradient(90deg, rgba(110,70,30,.07) 0 2px, transparent 2px 8px),
+      linear-gradient(90deg,#D3AF7F,#E6CB9F 45%,#DCBB8C 70%,#CCA676);
+    border:2px solid var(--wood-dark);border-radius:6px;
+    box-shadow:0 4px 0 var(--wood-dark), 0 12px 18px rgba(90,60,30,.16);
+    transform-origin:50% -30px;
+  }
+  /* 吊るしひもと釘 */
+  .plaque::before{content:"";position:absolute;left:50%;top:-30px;width:2px;height:30px;margin-left:-1px;background:var(--wood-dark);}
+  .plaque::after{content:"";position:absolute;left:50%;top:-36px;width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:#4A3524;}
+  .plaque:active{transform:translateY(2px);box-shadow:0 2px 0 var(--wood-dark), 0 6px 10px rgba(90,60,30,.16);}
+  .plaque.small{height:240px;min-width:84px;margin-top:46px;}
+  .v{writing-mode:vertical-rl;text-orientation:upright;}
+  .plaque .tag{font-size:12px;font-weight:700;color:var(--shu);letter-spacing:.25em;}
+  .plaque .name{font-size:32px;font-weight:800;letter-spacing:.1em;line-height:1.2;max-height:100%;}
+  .plaque .note{font-size:12px;color:var(--sub);letter-spacing:.08em;margin-top:auto;}
+  .tcy{text-combine-upright:all;-webkit-text-combine:horizontal;}
 
-  /* 結果 */
-  .tag{
-    display:inline-flex;align-items:center;gap:6px;
-    font-size:13px;font-weight:800;color:#fff;background:var(--pop-navy);
-    padding:4px 12px;border-radius:999px;margin-bottom:12px;
-  }
-  .mode-chip{background:var(--pop-yellow);color:var(--pop-navy);padding:1px 8px;border-radius:999px;font-size:12px;}
-  .lead-in{font-size:16px;font-weight:700;color:#9a7b2e;margin-bottom:4px;min-height:22px;}
-  .dish{
-    font-size:42px;font-weight:900;line-height:1.15;min-height:58px;
-    display:flex;align-items:center;justify-content:center;flex-wrap:wrap;
-  }
-  .dish.small{font-size:28px;min-height:38px;}
-  .slot.spinning{color:#c0c2d0;filter:blur(.3px);}
-  .slot.settled{color:var(--pop-red);}
-  .dish.small .slot.settled{color:var(--pop-teal);}
-  .bang{color:var(--pop-orange);}
-  .pop{animation:pop .35s cubic-bezier(.2,1.4,.4,1);}
-  @keyframes pop{0%{transform:scale(.6);opacity:0;}100%{transform:scale(1);opacity:1;}}
+  .plaque.spinning{animation:swing .45s ease-in-out infinite alternate;}
+  .plaque.spinning .name{color:#9C8164;white-space:nowrap;overflow:hidden;}
+  .plaque.appear{animation:settle .9s ease-out;}
+  @keyframes swing{from{transform:rotate(-3deg);}to{transform:rotate(3deg);}}
+  @keyframes settle{0%{transform:rotate(4deg);}35%{transform:rotate(-2.5deg);}65%{transform:rotate(1.2deg);}100%{transform:rotate(0);}}
 
-  .reroll{
-    margin-top:18px;background:#fff;border:3px solid var(--pop-navy);
-    border-radius:14px;padding:13px 20px;font-size:16px;font-weight:800;
-    cursor:pointer;box-shadow:3px 3px 0 var(--pop-navy);font-family:inherit;color:var(--pop-navy);
-    transition:transform .08s, box-shadow .08s;
+  /* まだ決めていない副菜の札（点線） */
+  .plaque.empty{
+    background:rgba(255,251,242,.5);border:2px dashed #B79C7A;box-shadow:none;
   }
-  .reroll:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--pop-navy);}
-  .reroll:disabled{opacity:.4;}
-  .reroll.small{font-size:14px;padding:10px 16px;margin-top:12px;}
+  .plaque.empty .name{font-size:20px;color:var(--sub);font-weight:700;}
+  .plaque.empty::before{background:#B79C7A;}
+  .plaque:disabled{cursor:default;}
 
-  .subtle-add{
-    margin-top:24px;background:none;border:2px dashed #c7c9d6;
-    color:#9a9cae;border-radius:12px;padding:11px 16px;
-    font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
+  /* 材料メモ */
+  .memo{
+    margin-top:26px;background:var(--paper);border:1px solid #D8C6A6;border-radius:4px;
+    padding:12px 14px;font-size:13px;color:var(--sub);
   }
-  .subtle-add:active{transform:scale(.97);}
-  .subtle-add:disabled{opacity:.4;}
-  .side-sub{margin-top:22px;padding-top:18px;border-top:2px dashed #e3e4ec;}
+  .memo p + p{margin-top:6px;padding-top:6px;border-top:1px dashed #E2D4BC;}
+  .memo b{color:var(--ink);font-weight:700;margin-right:.5em;}
 
-  .ing-btn{
-    display:block;margin:12px auto 0;background:none;border:none;
-    color:var(--pop-teal);font-size:14px;font-weight:800;cursor:pointer;
-    font-family:inherit;text-decoration:underline;text-underline-offset:3px;
+  /* ボタン */
+  .btns{display:flex;gap:10px;margin-top:22px;}
+  .btn{
+    flex:1;padding:13px 6px;border-radius:4px;font-size:15px;font-weight:700;letter-spacing:.08em;cursor:pointer;
+    background:var(--ink);color:#F7EBD3;border:1px solid var(--ink);
   }
-  .ing-btn:active{opacity:.6;}
-  .ing-box{
-    margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
-    animation:fade .25s ease;
+  .btn.line{background:transparent;color:var(--ink);}
+  .btn:active{opacity:.8;}
+  .btn:disabled{opacity:.35;cursor:default;}
+  .text-btn{
+    background:none;border:0;cursor:pointer;padding:6px 0;font-size:13px;color:var(--sub);
+    text-decoration:underline;text-underline-offset:4px;
   }
-  @keyframes fade{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
-  .ing-item{
-    background:var(--pop-cream);border:2px solid var(--pop-navy);
-    border-radius:999px;padding:5px 12px;font-size:14px;font-weight:700;
-  }
+  .links{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+
+  /* 最近の記録 */
+  .recent{margin-top:34px;background:var(--paper);border:1px solid #D8C6A6;border-radius:4px;padding:12px 14px;font-size:12px;color:var(--sub);}
+  .recent h2{font-size:12px;font-weight:700;color:var(--ink);letter-spacing:.1em;margin-bottom:4px;}
+  .recent b{color:var(--ink);margin-right:.5em;}
+  .recent .foot{display:flex;justify-content:space-between;align-items:center;margin-top:4px;}
+
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+  :focus-visible{outline:2px solid var(--shu);outline-offset:3px;}
+  @media (prefers-reduced-motion:reduce){.plaque.spinning,.plaque.appear{animation:none;}}
 </style>
 </head>
 <body>
@@ -134,6 +135,7 @@
     3. 消したいときは その料理ごと（"焼きそば", まるごと）削除する
 
   ※ 全角スペースやカンマ抜けがあると動かなくなるので注意。
+  ※ 料理を足したら、下の INGREDIENTS にも同じ名前で材料を足す。
 ==================================================================
 -->
 <script>
@@ -144,6 +146,9 @@
     "チャーハン","目玉焼き丼","ニラ玉","生姜焼き","回鍋肉",
     "豚キムチ","野菜炒め","冷やし中華","素麺","キムチチャーハン",
     "天津飯","うどんすき","麻婆春雨","豚バラ大根","鶏そぼろ丼",
+    "釜玉うどん","鮭茶漬け","ツナマヨ丼","明太子パスタ","きのこの和風パスタ",
+    "肉豆腐","オムそば","ビビンバ丼","寄せ鍋","キムチ鍋",
+    "にゅうめん","ピザトースト",
   ];
 
   // 普通の主菜（ちゃんと作るモードで追加で出るやつ）
@@ -155,6 +160,10 @@
     "餃子","酢豚","エビチリ","青椒肉絲","八宝菜",
     "鮭のムニエル","ぶり大根","さんまの塩焼き","天ぷら","すき焼き",
     "カレーうどん","麻婆茄子","エビフライ","ハヤシライス","タコライス",
+    "ロールキャベツ","グラタン","クリームシチュー","ビーフシチュー","筑前煮",
+    "とんかつ","鯖の味噌煮","鮭のちゃんちゃん焼き","油淋鶏","豚の角煮",
+    "春巻き","ちらし寿司","手巻き寿司","お好み焼き","たこ焼き",
+    "キーマカレー","しゃぶしゃぶ","鶏のトマト煮",
   ];
 
   // 副菜（モードなし。いつもここ全部から出る）
@@ -162,10 +171,14 @@
     "冷奴","きゅうりの浅漬け","トマトサラダ","わかめの酢の物","味噌汁",
     "コーンスープ","ほうれん草のおひたし","きんぴらごぼう","ポテトサラダ",
     "切り干し大根","マカロニサラダ",
+    "だし巻き卵","ひじきの煮物","茄子の揚げびたし","もやしのナムル","キャベツの塩昆布和え",
+    "かぼちゃの煮物","小松菜の煮びたし","大学いも","春雨サラダ","ごぼうサラダ",
+    "コールスロー","ブロッコリーのおかか和え","豚汁","卵スープ","ミネストローネ",
+    "いんげんのごま和え","たたききゅうり","揚げ出し豆腐","シーザーサラダ","白和え",
   ];
 
   // 各料理の材料（食材名だけ。分量はなし）
-  // 「材料をみる」ボタンを押すと、ここの中身が表示される。
+  // 「材料を見る」ボタンを押すと、ここの中身が表示される。
   // 料理名を追加したら、ここにも同じ料理名で材料を足す。
   const INGREDIENTS = {
     "コンビニ飯":["おにぎり","お弁当","サラダ","惣菜"],
@@ -240,26 +253,130 @@
     "ポテトサラダ":["じゃがいも","きゅうり","人参","ハム","玉ねぎ","マヨネーズ"],
     "切り干し大根":["切り干し大根","人参","油揚げ","醤油","みりん","だし"],
     "マカロニサラダ":["マカロニ","きゅうり","ハム","人参","マヨネーズ"],
+    // ---- 2026年11月に追加した料理 ----
+    "釜玉うどん":["うどん","卵","ねぎ","醤油"],
+    "鮭茶漬け":["ご飯","焼き鮭","海苔","だし"],
+    "ツナマヨ丼":["ご飯","ツナ缶","マヨネーズ","卵","海苔"],
+    "明太子パスタ":["スパゲッティ","明太子","バター","海苔"],
+    "きのこの和風パスタ":["スパゲッティ","しめじ","ベーコン","バター","醤油"],
+    "肉豆腐":["牛こま肉","豆腐","玉ねぎ","醤油","砂糖"],
+    "オムそば":["焼きそば麺","卵","豚こま肉","キャベツ","ソース"],
+    "ビビンバ丼":["ご飯","牛ひき肉","もやし","ほうれん草","人参","コチュジャン"],
+    "寄せ鍋":["鶏もも肉","白菜","豆腐","ねぎ","しいたけ","鍋つゆ"],
+    "キムチ鍋":["豚バラ肉","キムチ","白菜","豆腐","ニラ"],
+    "にゅうめん":["素麺","卵","ねぎ","だし"],
+    "ピザトースト":["食パン","ハム","ピーマン","玉ねぎ","チーズ","ケチャップ"],
+    "ロールキャベツ":["キャベツ","合いびき肉","玉ねぎ","コンソメ"],
+    "グラタン":["マカロニ","鶏もも肉","玉ねぎ","牛乳","バター","小麦粉","チーズ"],
+    "クリームシチュー":["鶏もも肉","じゃがいも","人参","玉ねぎ","牛乳","シチューのルー"],
+    "ビーフシチュー":["牛肉","じゃがいも","人参","玉ねぎ","ビーフシチューのルー"],
+    "筑前煮":["鶏もも肉","ごぼう","れんこん","人参","こんにゃく","しいたけ"],
+    "とんかつ":["豚ロース肉","小麦粉","卵","パン粉","キャベツ"],
+    "鯖の味噌煮":["さば","味噌","生姜","ねぎ"],
+    "鮭のちゃんちゃん焼き":["鮭","キャベツ","玉ねぎ","人参","味噌","バター"],
+    "油淋鶏":["鶏もも肉","片栗粉","ねぎ","生姜","醤油","酢"],
+    "豚の角煮":["豚バラブロック","ゆで卵","生姜","ねぎ","醤油"],
+    "春巻き":["春巻きの皮","豚ひき肉","春雨","たけのこ","しいたけ"],
+    "ちらし寿司":["ご飯","すし酢","卵","えび","絹さや","海苔"],
+    "手巻き寿司":["ご飯","すし酢","海苔","まぐろ","サーモン","きゅうり","卵"],
+    "お好み焼き":["お好み焼き粉","キャベツ","豚バラ肉","卵","ソース","マヨネーズ"],
+    "たこ焼き":["たこ焼き粉","たこ","ねぎ","天かす","紅しょうが","卵"],
+    "キーマカレー":["合いびき肉","玉ねぎ","人参","トマト缶","カレー粉"],
+    "しゃぶしゃぶ":["豚しゃぶしゃぶ用肉","白菜","ねぎ","豆腐","ポン酢","ごまだれ"],
+    "鶏のトマト煮":["鶏もも肉","トマト缶","玉ねぎ","しめじ","にんにく"],
+    "だし巻き卵":["卵","だし","醤油"],
+    "ひじきの煮物":["ひじき","人参","油揚げ","大豆"],
+    "茄子の揚げびたし":["なす","めんつゆ","生姜"],
+    "もやしのナムル":["もやし","ごま油","鶏がらスープの素","ごま"],
+    "キャベツの塩昆布和え":["キャベツ","塩昆布","ごま油"],
+    "かぼちゃの煮物":["かぼちゃ","醤油","砂糖","みりん"],
+    "小松菜の煮びたし":["小松菜","油揚げ","だし"],
+    "大学いも":["さつまいも","砂糖","醤油","黒ごま"],
+    "春雨サラダ":["春雨","きゅうり","ハム","人参","酢"],
+    "ごぼうサラダ":["ごぼう","人参","マヨネーズ","ごま"],
+    "コールスロー":["キャベツ","人参","コーン","マヨネーズ"],
+    "ブロッコリーのおかか和え":["ブロッコリー","かつお節","醤油"],
+    "豚汁":["豚こま肉","大根","人参","ごぼう","こんにゃく","味噌"],
+    "卵スープ":["卵","ねぎ","わかめ","鶏がらスープの素"],
+    "ミネストローネ":["トマト缶","玉ねぎ","人参","キャベツ","ベーコン"],
+    "いんげんのごま和え":["いんげん","すりごま","醤油","砂糖"],
+    "たたききゅうり":["きゅうり","ごま油","にんにく","鶏がらスープの素"],
+    "揚げ出し豆腐":["豆腐","片栗粉","大根","めんつゆ","ねぎ"],
+    "シーザーサラダ":["レタス","ベーコン","クルトン","粉チーズ"],
+    "白和え":["豆腐","ほうれん草","人参","すりごま"],
   };
 </script>
 <!-- ================== 編集はここまで ================== -->
 
 
-<div class="card" id="app"></div>
+<main class="wrap">
+  <header>
+    <div class="sign"><h1 class="mincho">今日の献立</h1></div>
+    <p class="date" id="date"></p>
+  </header>
+  <div id="app"></div>
+  <p class="sr" aria-live="polite" id="live"></p>
+</main>
 
 <script>
-  const SPIN_MS = 1300;   // スロットが回る時間（ミリ秒）
-  const TICK_MS = 70;     // 料理名が切り替わる速さ
+  const SPIN_MS = 1300;      // スロットが回る時間（ミリ秒）
+  const TICK_MS = 70;        // 料理名が切り替わる速さ
+  const RECENT_MAX = 5;      // 最近決まった料理を何品まで避けるか
+  const STORE_KEY = "kondate-recent-v1";
+
+  // 今日の日付（例：11月25日（水））
+  (function(){
+    const d = new Date();
+    document.getElementById("date").textContent =
+      `${d.getMonth()+1}月${d.getDate()}日（${"日月火水木金土"[d.getDay()]}）`;
+  })();
+
+  // ---- 最近決まった料理の記録（このスマホの中だけに保存） ----
+  function loadRecent(){
+    try{
+      const r = JSON.parse(localStorage.getItem(STORE_KEY));
+      if(r && Array.isArray(r.main) && Array.isArray(r.side)) return r;
+    }catch(e){}
+    return {main:[], side:[]};
+  }
+  function saveRecent(){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(recent)); }catch(e){}
+  }
+  let recent = loadRecent();
+  // 今回アプリを開いてから出た料理（引き直しで同じものが戻ってこないように）
+  const sessionSeen = {main:[], side:[]};
+  // 今回アプリを開いてから記録した料理（引き直したら記録を差し替える）
+  const sessionEntry = {main:null, side:null};
+
+  function remember(kind, name){
+    const prev = sessionEntry[kind];
+    recent[kind] = [name, ...recent[kind].filter(n => n !== name && n !== prev)].slice(0, RECENT_MAX);
+    sessionEntry[kind] = name;
+    sessionSeen[kind].push(name);
+    saveRecent();
+  }
+  function clearRecent(){
+    if(!confirm("最近決まった料理の記録を消しますか？")) return;
+    recent = {main:[], side:[]};
+    sessionEntry.main = sessionEntry.side = null;
+    saveRecent();
+    render();
+  }
 
   // 状態
-  let state = {
-    screen: "start",     // start / mode / result
-    category: null,      // main / side
-    mode: null,          // 普通 / 手抜き / null
-    mainName: null, mainSpin: false, mainIng: false,
-    sideName: null, sideSpin: false, sideOpen: false, sideIng: false,
-  };
+  function freshState(){
+    return {
+      screen: "start",     // start / mode / result
+      category: null,      // main / side
+      mode: null,          // 普通 / 手抜き / null
+      mainName: null, mainSpin: false,
+      sideName: null, sideSpin: false, sideOpen: false,
+      ing: false,          // 材料を表示中か
+    };
+  }
+  let state = freshState();
   let spinTimers = [];
+  const fresh = {main:false, side:false}; // 決まった直後だけ札をゆらす
 
   function clearSpin(){ spinTimers.forEach(clearInterval); spinTimers.forEach(clearTimeout); spinTimers=[]; }
 
@@ -269,19 +386,21 @@
     if(mode === "手抜き") return MAIN_LAZY;
     return MAIN_LAZY.concat(MAIN_NORMAL); // 普通 = 全主菜
   }
-  // 直前と別のものを引く
-  function pick(pool, prev){
-    if(pool.length === 0) return null;
-    if(pool.length === 1) return pool[0];
-    let n; do { n = pool[Math.floor(Math.random()*pool.length)]; } while(n === prev);
-    return n;
+  // 最近出たものを避けて引く（候補がなくなったら少しずつゆるめる）
+  function pick(kind, pool, current){
+    const avoid = new Set([...recent[kind], ...sessionSeen[kind]]);
+    let c = pool.filter(n => n !== current && !avoid.has(n));
+    if(!c.length) c = pool.filter(n => n !== current && !recent[kind].includes(n));
+    if(!c.length) c = pool.filter(n => n !== current);
+    if(!c.length) c = pool;
+    return c.length ? c[Math.floor(Math.random()*c.length)] : null;
   }
 
   // スロットを回して確定
   function spin(kind){ // kind: "main" | "side"
     const pool = kind==="main" ? poolFor("main", state.mode) : poolFor("side", null);
-    const prev = kind==="main" ? state.mainName : state.sideName;
-    const chosen = pick(pool, prev);
+    const current = kind==="main" ? state.mainName : state.sideName;
+    const chosen = pick(kind, pool, current);
 
     if(kind==="main"){ state.mainSpin=true; } else { state.sideSpin=true; state.sideOpen=true; }
     render();
@@ -294,9 +413,12 @@
 
     const to = setTimeout(()=>{
       clearInterval(iv);
-      if(kind==="main"){ state.mainName=chosen; state.mainSpin=false; state.mainIng=false; }
-      else { state.sideName=chosen; state.sideSpin=false; state.sideIng=false; }
+      if(kind==="main"){ state.mainName=chosen; state.mainSpin=false; }
+      else { state.sideName=chosen; state.sideSpin=false; }
+      if(chosen) remember(kind, chosen);
+      fresh[kind] = true;
       render();
+      document.getElementById("live").textContent = (kind==="main" ? "主菜は" : "副菜は") + chosen;
     }, SPIN_MS);
     spinTimers.push(to);
   }
@@ -321,12 +443,37 @@
   }
   function rerollMain(){ if(!busy()) spin("main"); }
   function rollSide(){ if(!busy()) spin("side"); }
-  function toggleMainIng(){ state.mainIng = !state.mainIng; render(); }
-  function toggleSideIng(){ state.sideIng = !state.sideIng; render(); }
-  function reset(){
-    clearSpin();
-    state = {screen:"start",category:null,mode:null,mainName:null,mainSpin:false,sideName:null,sideSpin:false,sideOpen:false};
-    render();
+  function toggleIng(){ state.ing = !state.ing; render(); }
+  function reset(){ clearSpin(); state = freshState(); render(); }
+
+  // 数字を縦書きの中で横並びにする（例：54）
+  const tcy = n => `<span class="tcy">${n}</span>`;
+
+  // 札の文字の大きさと札の長さ（長い料理名は札を長く・文字を小さくして1列に収める）
+  function fitPlaque(name, base, minH, maxH){
+    if(!name) return {size: base, height: minH};
+    const per = 1.12; // 1文字ぶんの高さ（字間こみ）
+    let size = base;
+    if(name.length * size * per + 44 > maxH) size = Math.max(18, Math.floor((maxH - 44) / (name.length * per)));
+    const height = Math.max(minH, Math.min(maxH, Math.ceil(name.length * size * per + 44)));
+    return {size, height};
+  }
+
+  // 料理の札（主菜・副菜共通）
+  function dishPlaque(kind, opts){
+    const name = kind==="main" ? state.mainName : state.sideName;
+    const spinning = kind==="main" ? state.mainSpin : state.sideSpin;
+    const small = !!opts.small;
+    const minH = small ? 240 : 290, maxH = small ? 320 : 340;
+    const {size, height} = spinning ? {size: small ? 24 : 30, height: minH} : fitPlaque(name, small ? 28 : 34, minH, maxH);
+    const cls = "plaque" + (small ? " small" : "") + (spinning ? " spinning" : "") + (fresh[kind] ? " appear" : "");
+    const tag = kind==="main" ? "主菜" + (state.mode ? "・" + state.mode : "") : "副菜";
+    const action = kind==="main" ? "rerollMain()" : "rollSide()";
+    return `
+      <button class="${cls}" style="height:${height}px" onclick="${action}" ${busy()?"disabled":""} aria-label="${tag} ${name ?? ""}（押すと引き直し）">
+        <span class="v tag">${tag}</span>
+        <span class="v name mincho" id="${kind}-slot" style="font-size:${size}px">${name ?? "…"}</span>
+      </button>`;
   }
 
   // 画面描画
@@ -335,12 +482,29 @@
     const s = state;
 
     if(s.screen==="start"){
+      const hasRecent = recent.main.length || recent.side.length;
       app.innerHTML = `
-        <div class="logo">🍚</div>
-        <h1 class="title">今日の献立</h1>
-        <p class="lead">なに食べる？ ボタンで決めちゃおう</p>
-        <button class="big main-btn" onclick="chooseCategory('main')">主菜をきめる</button>
-        <button class="big side-btn" onclick="chooseCategory('side')">副菜をきめる</button>
+        <p class="q">どっちを決める？ 札を押してね</p>
+        <div class="boards">
+          <button class="plaque" onclick="chooseCategory('side')">
+            <span class="v tag">副菜</span>
+            <span class="v name mincho" style="font-size:30px">副菜をきめる</span>
+            <span class="v note">${tcy(SIDES.length)}品から</span>
+          </button>
+          <button class="plaque" onclick="chooseCategory('main')">
+            <span class="v tag">主菜</span>
+            <span class="v name mincho" style="font-size:30px">主菜をきめる</span>
+            <span class="v note">普通・手抜き</span>
+          </button>
+        </div>
+        ${hasRecent ? `
+          <section class="recent">
+            <h2>最近決まった料理</h2>
+            ${recent.main.length ? `<p><b>主菜</b>${recent.main.join("・")}</p>` : ""}
+            ${recent.side.length ? `<p><b>副菜</b>${recent.side.join("・")}</p>` : ""}
+            <div class="foot"><span>しばらく出にくくなっています</span>
+              <button class="text-btn" onclick="clearRecent()">記録を消す</button></div>
+          </section>` : ""}
       `;
       return;
     }
@@ -349,67 +513,60 @@
       const lazyN = poolFor("main","手抜き").length;
       const allN = poolFor("main","普通").length;
       app.innerHTML = `
-        <button class="link back-top" onclick="reset()">← もどる</button>
-        <h2 class="q">今日はどっちの気分？</h2>
-        <button class="big normal-btn" onclick="chooseMode('普通')">
-          <span class="btn-emoji">🍳</span>
-          <span><strong>普通</strong><small>ちゃんと作る（${allN}品から）</small></span>
-        </button>
-        <button class="big lazy-btn" onclick="chooseMode('手抜き')">
-          <span class="btn-emoji">😮‍💨</span>
-          <span><strong>手抜き</strong><small>疲れた日用（${lazyN}品から）</small></span>
-        </button>
+        <p class="q">今日はどっちの気分？</p>
+        <div class="boards">
+          <button class="plaque" onclick="chooseMode('手抜き')">
+            <span class="v tag">疲れた日</span>
+            <span class="v name mincho" style="font-size:34px">手抜き</span>
+            <span class="v note">${tcy(lazyN)}品から</span>
+          </button>
+          <button class="plaque" onclick="chooseMode('普通')">
+            <span class="v tag">ちゃんと作る</span>
+            <span class="v name mincho" style="font-size:34px">普通</span>
+            <span class="v note">${tcy(allN)}品から</span>
+          </button>
+        </div>
+        <div class="links"><button class="text-btn" onclick="reset()">← もどる</button></div>
       `;
       return;
     }
 
-    // result
-    let html = `<button class="link back-top" onclick="reset()">← 最初にもどる</button>`;
-
+    // result（縦書きなので、主菜を右・副菜を左に並べる）
+    let boards = "";
     if(s.category==="main"){
-      const slotCls = s.mainSpin ? "slot spinning" : "slot settled";
-      const popCls = s.mainSpin ? "dish" : "dish pop";
-      html += `
-        <div>
-          <div class="tag">主菜 <span class="mode-chip">${s.mode}</span></div>
-          <div class="lead-in">${s.mainSpin ? "今日は…" : "今日は！"}</div>
-          <div class="${popCls}">
-            <span id="main-slot" class="${slotCls}">${s.mainName ?? "…"}</span>${!s.mainSpin && s.mainName ? '<span class="bang">！</span>' : ''}
-          </div>
-          <button class="reroll" onclick="rerollMain()" ${busy()?"disabled":""}>🎲 主菜を引き直す</button>
-          ${!s.mainSpin && s.mainName ? `
-            <button class="ing-btn" onclick="toggleMainIng()">${s.mainIng ? "材料をとじる ▲" : "材料をみる ▼"}</button>
-            ${s.mainIng ? `<div class="ing-box">${(INGREDIENTS[s.mainName]||["(材料未登録)"]).map(x=>`<span class="ing-item">${x}</span>`).join("")}</div>` : ""}
-          ` : ""}
-        </div>
-      `;
+      boards += s.sideOpen
+        ? dishPlaque("side", {small:true})
+        : `<button class="plaque small empty" onclick="rollSide()" ${busy()?"disabled":""}>
+             <span class="v name mincho">＋副菜もきめる</span>
+           </button>`;
+      boards += dishPlaque("main", {});
+    } else {
+      boards += dishPlaque("side", {});
     }
 
-    if(s.category==="main" && !s.sideOpen){
-      html += `<button class="subtle-add" onclick="rollSide()" ${busy()?"disabled":""}>＋ 副菜もつける？</button>`;
-    }
+    const done = (s.category==="main" && s.mainName && !s.mainSpin) || (s.category==="side" && s.sideName && !s.sideSpin);
+    const ingLine = (label, name) => name ? `<p><b>${label}　${name}</b>${(INGREDIENTS[name] || ["（材料未登録）"]).join("・")}</p>` : "";
+    const memo = s.ing && done ? `
+      <div class="memo">
+        ${s.category==="main" ? ingLine("主菜", s.mainSpin ? null : s.mainName) : ""}
+        ${s.sideOpen ? ingLine("副菜", s.sideSpin ? null : s.sideName) : ""}
+      </div>` : "";
 
-    if(s.category==="side" || (s.category==="main" && s.sideOpen)){
-      const slotCls = s.sideSpin ? "slot spinning" : "slot settled";
-      const isSub = s.category==="main";
-      const dishCls = (s.sideSpin ? "dish" : "dish pop") + (isSub ? " small" : "");
-      html += `
-        <div class="${isSub ? "side-sub" : ""}">
-          <div class="tag">副菜</div>
-          ${s.category==="side" ? `<div class="lead-in">${s.sideSpin ? "今日は…" : "今日は！"}</div>` : ""}
-          <div class="${dishCls}">
-            <span id="side-slot" class="${slotCls}">${s.sideName ?? "…"}</span>${!s.sideSpin && s.sideName ? '<span class="bang">！</span>' : ''}
-          </div>
-          <button class="reroll small" onclick="rollSide()" ${busy()?"disabled":""}>🎲 副菜を引き直す</button>
-          ${!s.sideSpin && s.sideName ? `
-            <button class="ing-btn" onclick="toggleSideIng()">${s.sideIng ? "材料をとじる ▲" : "材料をみる ▼"}</button>
-            ${s.sideIng ? `<div class="ing-box">${(INGREDIENTS[s.sideName]||["(材料未登録)"]).map(x=>`<span class="ing-item">${x}</span>`).join("")}</div>` : ""}
-          ` : ""}
-        </div>
-      `;
-    }
+    const btns = s.category==="main"
+      ? `<button class="btn" onclick="rerollMain()" ${busy()?"disabled":""}>主菜を引き直す</button>
+         ${s.sideOpen ? `<button class="btn line" onclick="rollSide()" ${busy()?"disabled":""}>副菜を引き直す</button>` : ""}`
+      : `<button class="btn" onclick="rollSide()" ${busy()?"disabled":""}>引き直す</button>`;
 
-    app.innerHTML = html;
+    app.innerHTML = `
+      <div class="boards">${boards}</div>
+      ${memo}
+      <div class="btns">${btns}</div>
+      <div class="links">
+        <button class="text-btn" onclick="reset()">← 最初にもどる</button>
+        ${done ? `<button class="text-btn" onclick="toggleIng()" aria-expanded="${s.ing}">${s.ing ? "材料を閉じる" : "材料を見る"}</button>` : ""}
+      </div>
+    `;
+    fresh.main = fresh.side = false;
   }
 
   render();
